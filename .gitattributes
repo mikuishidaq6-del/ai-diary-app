@@ -1,0 +1,6 @@
+# すべてのテキストファイルは LF を使う
+* text=auto eol=lf
+
+# Windows専用スクリプトなど CRLF が必要な場合は例外指定
+*.bat text eol=crlf
+*.cmd text eol=crlf
