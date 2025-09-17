@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/health_record.dart';
+import 'calendar_page.dart';
 import 'chart_page.dart';
 
 class HealthRecordPage extends StatefulWidget {
@@ -134,6 +135,16 @@ class _HealthRecordPageState extends State<HealthRecordPage> {
             const SizedBox(height: 20),
             ElevatedButton(onPressed: _saveRecord, child: const Text("保存")),
             const SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CalendarPage()),
+                );
+              },
+              child: const Text("カレンダーを見る"),
+            ),
 
             // グラフボタン群
             Wrap(
