@@ -18,15 +18,23 @@ class _PostPageState extends State<PostPage> {
 
     setState(() => _sending = true);
 
-    // Firestoreにデータを追加
-    await FirebaseFirestore.instance.collection("posts").add({
-      "userMessage": text,   // ユーザーが入力した内容
-      "aiReply": null,       // AIの返事（まだ空）
-      "status": "waiting",   // 状態（返信待ち）
-      "createdAt": FieldValue.serverTimestamp(),
-    });
+    try {
+      await FirebaseFirestore.instance.collection("posts").add({
+        "userMessage": text,
+        "aiReply": null,
+        "status": "waiting",
+        "createdAt": FieldValue.serverTimestamp(),
+      });
+      _controller.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("投稿しました！AIの返事を待ってください")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("送信エラー: $e")),
+      );
+    }
 
-    _controller.clear();
     setState(() => _sending = false);
   }
 
@@ -93,6 +101,8 @@ class _PostPageState extends State<PostPage> {
                     final userMessage = data["userMessage"] ?? "";
                     final aiReply = data["aiReply"];
                     final status = data["status"];
+                    final ts = data["createdAt"] as Timestamp?;
+                    final createdAt = ts?.toDate();
 
                     return Card(
                       margin: const EdgeInsets.symmetric(
@@ -108,6 +118,13 @@ class _PostPageState extends State<PostPage> {
                                 : "⏳ 返信待ち…")
                                 : "🤖 AI: $aiReply",
                           ),
+                        ),
+                        trailing: createdAt == null
+                            ? null
+                            : Text(
+                          "${createdAt.month}/${createdAt.day} "
+                              "${createdAt.hour}:${createdAt.minute.toString().padLeft(2, '0')}",
+                          style: const TextStyle(fontSize: 12),
                         ),
                       ),
                     );
