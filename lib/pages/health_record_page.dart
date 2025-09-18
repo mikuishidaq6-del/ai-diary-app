@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'post_page.dart';
 import '../models/health_record.dart';
 import 'calendar_page.dart';
 import 'chart_page.dart';
@@ -144,6 +145,16 @@ class _HealthRecordPageState extends State<HealthRecordPage> {
                 );
               },
               child: const Text("カレンダーを見る"),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PostPage()),
+                );
+              },
+              child: const Text("AI投稿ページへ"),
             ),
 
             // グラフボタン群
