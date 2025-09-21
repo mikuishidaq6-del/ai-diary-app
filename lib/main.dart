@@ -1,53 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:firebase_core/firebase_core.dart'; // Firebase用
-// import 'firebase_options.dart'; // flutterfire configure で生成されるファイル
-// import 'package:hive_flutter/hive_flutter.dart';
-// import 'models/health_record.dart';
-//
-// // ページをインポート
-// import 'pages/health_record_page.dart';
-// import 'pages/post_page.dart';
-// import 'pages/timeline_page.dart';
-//
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//
-//   // 🔹 Firebase 初期化
-//   await Firebase.initializeApp(
-//     options: DefaultFirebaseOptions.currentPlatform,
-//   );
-//
-//   // 🔹 Hive 初期化
-//   await Hive.initFlutter();
-//   Hive.registerAdapter(HealthRecordAdapter());
-//   await Hive.openBox<HealthRecord>('records');
-//
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: '健康記録アプリ',
-//       theme: ThemeData(primarySwatch: Colors.blue),
-//
-//       // 最初に開くページを変更したい場合はここを変える
-//       // home: const HealthRecordPage(),
-//       home: const PostPage(),
-//
-//       // 🔹 ページ遷移用ルート
-//       routes: {
-//         '/health': (context) => const HealthRecordPage(),
-//         '/post': (context) => const PostPage(),
-//         '/timeline': (context) => const TimelinePage(),
-//       },
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -57,7 +7,7 @@ import 'models/health_record.dart';
 // ページ
 import 'pages/health_record_page.dart';
 import 'pages/post_page.dart';
-import 'pages/timeline_page.dart';
+import 'pages/calendar_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,7 +32,52 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '健康記録アプリ',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        // 🌸 全体テーマを水色系に
+        primarySwatch: Colors.lightBlue,
+        scaffoldBackgroundColor: Colors.blue[50],
+
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.lightBlue[300],
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.lightBlue[600],
+          unselectedItemColor: Colors.grey,
+          selectedIconTheme: const IconThemeData(size: 28),
+          unselectedIconTheme: const IconThemeData(size: 24),
+          type: BottomNavigationBarType.fixed,
+        ),
+
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.lightBlue[300],
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+
+        cardTheme: CardThemeData(
+          color: Colors.white,
+          elevation: 3,
+          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
       home: const MainNavigationPage(), // 🔹 ここでタブ管理ページにする
     );
   }
@@ -97,18 +92,18 @@ class MainNavigationPage extends StatefulWidget {
 }
 
 class _MainNavigationPageState extends State<MainNavigationPage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 0; // ← 初期ページを「健康記録」に
 
   final List<Widget> _pages = const [
     HealthRecordPage(),
     PostPage(),
-    TimelinePage(),
+    CalendarPage(),
   ];
 
   final List<String> _titles = const [
     "健康記録",
     "AI投稿",
-    "タイムライン",
+    "カレンダー",
   ];
 
   void _onItemTapped(int index) {
@@ -135,8 +130,8 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
             label: "AI投稿",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: "タイムライン",
+            icon: Icon(Icons.calendar_today),
+            label: "カレンダー",
           ),
         ],
       ),
