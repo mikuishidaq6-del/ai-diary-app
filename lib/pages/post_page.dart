@@ -205,7 +205,6 @@ class _PostPageState extends State<PostPage> {
         .orderBy("createdAt", descending: true);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("AI 投稿ページ")),
       body: Column(
         children: [
           // 入力欄
