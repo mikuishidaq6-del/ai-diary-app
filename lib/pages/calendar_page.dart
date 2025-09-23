@@ -15,6 +15,13 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
+  String _displayValue(dynamic value, {String unit = ""}) {
+    if (value == null || value.toString() == "null" || value.toString().isEmpty) {
+      return "-";
+    }
+    return "$value$unit";
+  }
+
   @override
   Widget build(BuildContext context) {
     final box = Hive.box<HealthRecord>('records');
@@ -69,7 +76,6 @@ class _CalendarPageState extends State<CalendarPage> {
                     }
                     return null;
                   },
-                  // 選択日を水色でハイライト
                   selectedBuilder: (context, day, focusedDay) {
                     return Container(
                       margin: const EdgeInsets.all(6),
@@ -112,7 +118,9 @@ class _CalendarPageState extends State<CalendarPage> {
                               "${r.datetime.hour}:${r.datetime.minute.toString().padLeft(2, '0')}",
                             ),
                             subtitle: Text(
-                              "体温: ${r.temperature}℃ / 血圧: ${r.bloodPressure} / 脈拍: ${r.pulse}",
+                              "体温: ${_displayValue(r.temperature, unit: "℃")} / "
+                                  "血圧: ${_displayValue(r.bloodPressure, unit: "mmHg")} / "
+                                  "脈拍: ${_displayValue(r.pulse, unit: "/分")}",
                             ),
                             onTap: () {
                               showDialog(
@@ -127,16 +135,16 @@ class _CalendarPageState extends State<CalendarPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("体温: ${r.temperature} ℃"),
-                                        Text("血圧: ${r.bloodPressure} mmHg"),
-                                        Text("脈拍: ${r.pulse} /分"),
-                                        Text("SpO₂: ${r.spo2} %"),
-                                        Text("体重: ${r.weight} kg"),
-                                        Text("白血球数: ${r.wbc}"),
-                                        Text("赤血球数: ${r.rbc}"),
-                                        Text("血小板数: ${r.platelets}"),
+                                        Text("体温: ${_displayValue(r.temperature, unit: "℃")}"),
+                                        Text("血圧: ${_displayValue(r.bloodPressure, unit: "mmHg")}"),
+                                        Text("脈拍: ${_displayValue(r.pulse, unit: "/分")}"),
+                                        Text("SpO₂: ${_displayValue(r.spo2, unit: "%")}"),
+                                        Text("体重: ${_displayValue(r.weight, unit: "kg")}"),
+                                        Text("白血球数: ${_displayValue(r.wbc)}"),
+                                        Text("赤血球数: ${_displayValue(r.rbc)}"),
+                                        Text("血小板数: ${_displayValue(r.platelets)}"),
                                         const SizedBox(height: 8),
-                                        Text("コメント: ${r.comment}"),
+                                        Text("コメント: ${r.comment.isNotEmpty ? r.comment : "-"}"),
                                       ],
                                     ),
                                     actions: [
