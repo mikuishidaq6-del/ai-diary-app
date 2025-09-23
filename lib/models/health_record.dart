@@ -8,42 +8,35 @@ class HealthRecord extends HiveObject {
   DateTime datetime;
 
   @HiveField(1)
-  double temperature;
-
+  double? temperature; // ← nullable に変更
   @HiveField(2)
-  double bloodPressure;
-
+  double? bloodPressure;
   @HiveField(3)
-  double pulse;
-
+  double? pulse;
   @HiveField(4)
-  double spo2;
-
+  double? spo2;
   @HiveField(5)
-  double weight;
-
+  double? weight;
   @HiveField(6)
-  double wbc;
-
+  double? wbc;
   @HiveField(7)
-  double rbc;
-
+  double? rbc;
   @HiveField(8)
-  double platelets;
+  double? platelets;
 
   @HiveField(9)
   String comment;
 
   HealthRecord({
     required this.datetime,
-    required this.temperature,
-    required this.bloodPressure,
-    required this.pulse,
-    required this.spo2,
-    required this.weight,
-    required this.wbc,
-    required this.rbc,
-    required this.platelets,
+    this.temperature,
+    this.bloodPressure,
+    this.pulse,
+    this.spo2,
+    this.weight,
+    this.wbc,
+    this.rbc,
+    this.platelets,
     required this.comment,
   });
 }

@@ -18,14 +18,14 @@ class HealthRecordAdapter extends TypeAdapter<HealthRecord> {
     };
     return HealthRecord(
       datetime: fields[0] as DateTime,
-      temperature: fields[1] as double,
-      bloodPressure: fields[2] as double,
-      pulse: fields[3] as double,
-      spo2: fields[4] as double,
-      weight: fields[5] as double,
-      wbc: fields[6] as double,
-      rbc: fields[7] as double,
-      platelets: fields[8] as double,
+      temperature: fields[1] as double?,
+      bloodPressure: fields[2] as double?,
+      pulse: fields[3] as double?,
+      spo2: fields[4] as double?,
+      weight: fields[5] as double?,
+      wbc: fields[6] as double?,
+      rbc: fields[7] as double?,
+      platelets: fields[8] as double?,
       comment: fields[9] as String,
     );
   }
