@@ -12,6 +12,25 @@
 //   final _controller = TextEditingController();
 //   bool _sending = false;
 //
+//   // 🔹 質問リスト（15個）
+//   final List<String> _questions = [
+//     "今日はどんな一日でしたか？",
+//     "体調の変化はありましたか？",
+//     "今の気分を一言で表すと？",
+//     "安心できた瞬間はありましたか？",
+//     "少し嬉しかったことはありますか？",
+//     "疲れを感じたのはどんな時でしたか？",
+//     "心がほっとした出来事は？",
+//     "今、体に一番感じることは？",
+//     "今日はどんなことに感謝したいですか？",
+//   ];
+//
+//   // 🔹 今日の日付から質問を選ぶ
+//   String get _todayQuestion {
+//     final day = DateTime.now().day;
+//     return _questions[day % _questions.length];
+//   }
+//
 //   Future<void> _send() async {
 //     final text = _controller.text.trim();
 //     if (text.isEmpty) return;
@@ -45,7 +64,6 @@
 //         .orderBy("createdAt", descending: true);
 //
 //     return Scaffold(
-//       appBar: AppBar(title: const Text("AI 投稿ページ")),
 //       body: Column(
 //         children: [
 //           // 入力欄
@@ -53,11 +71,11 @@
 //             padding: const EdgeInsets.all(12),
 //             child: TextField(
 //               controller: _controller,
-//               minLines: 6,
-//               maxLines: 12,
-//               decoration: const InputDecoration(
-//                 border: OutlineInputBorder(),
-//                 hintText: "今日はどんな一日でしたか？",
+//               minLines: 3,
+//               maxLines: 6,
+//               decoration: InputDecoration(
+//                 border: const OutlineInputBorder(),
+//                 hintText: _todayQuestion, // 🔹 日替わり質問を表示
 //               ),
 //             ),
 //           ),
@@ -153,7 +171,7 @@ class _PostPageState extends State<PostPage> {
   final _controller = TextEditingController();
   bool _sending = false;
 
-  // 🔹 質問リスト（15個）
+  // 🔹 質問リスト（サンプル）
   final List<String> _questions = [
     "今日はどんな一日でしたか？",
     "体調の変化はありましたか？",
@@ -166,7 +184,6 @@ class _PostPageState extends State<PostPage> {
     "今日はどんなことに感謝したいですか？",
   ];
 
-  // 🔹 今日の日付から質問を選ぶ
   String get _todayQuestion {
     final day = DateTime.now().day;
     return _questions[day % _questions.length];
@@ -186,9 +203,6 @@ class _PostPageState extends State<PostPage> {
         "createdAt": FieldValue.serverTimestamp(),
       });
       _controller.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("投稿しました！AIの返事を待ってください")),
-      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("送信エラー: $e")),
@@ -202,44 +216,28 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     final posts = FirebaseFirestore.instance
         .collection("posts")
-        .orderBy("createdAt", descending: true);
+        .orderBy("createdAt", descending: false); // 🔹 昇順でチャットっぽく
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("AIチャット"),
+        backgroundColor: Colors.lightBlueAccent,
+      ),
       body: Column(
         children: [
-          // 入力欄
-          Padding(
+          // 🔹 日替わり質問を上部に表示
+          Container(
             padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: _controller,
-              minLines: 3,
-              maxLines: 6,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: _todayQuestion, // 🔹 日替わり質問を表示
-              ),
+            width: double.infinity,
+            color: Colors.lightBlue[50],
+            child: Text(
+              "💡 今日の質問: $_todayQuestion",
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
+          const Divider(height: 1),
 
-          // 送信ボタン
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _sending ? null : _send,
-                child: Text(_sending ? "送信中..." : "送信"),
-              ),
-            ),
-          ),
-
-          const Divider(),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text("投稿一覧（新しい順）"),
-          ),
-
-          // Firestoreのデータを表示
+          // 🔹 チャット履歴
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: posts.snapshots(),
@@ -250,46 +248,88 @@ class _PostPageState extends State<PostPage> {
 
                 final docs = snapshot.data!.docs;
                 if (docs.isEmpty) {
-                  return const Center(child: Text("まだ投稿はありません"));
+                  return const Center(child: Text("まだ会話はありません"));
                 }
 
                 return ListView.builder(
+                  padding: const EdgeInsets.all(12),
                   itemCount: docs.length,
                   itemBuilder: (context, i) {
                     final data = docs[i].data() as Map<String, dynamic>;
                     final userMessage = data["userMessage"] ?? "";
                     final aiReply = data["aiReply"];
                     final status = data["status"];
-                    final ts = data["createdAt"] as Timestamp?;
-                    final createdAt = ts?.toDate();
 
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      child: ListTile(
-                        title: Text(userMessage),
-                        subtitle: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            aiReply == null
-                                ? (status == "error"
-                                ? "⚠️ エラーが発生しました"
-                                : "⏳ 返信待ち…")
-                                : "🤖 AI: $aiReply",
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // 🔹 ユーザーの吹き出し
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            margin: const EdgeInsets.symmetric(vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[100],
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(userMessage),
                           ),
                         ),
-                        trailing: createdAt == null
-                            ? null
-                            : Text(
-                          "${createdAt.month}/${createdAt.day} "
-                              "${createdAt.hour}:${createdAt.minute.toString().padLeft(2, '0')}",
-                          style: const TextStyle(fontSize: 12),
+
+                        // 🔹 AIの吹き出し
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(
+                              aiReply == null
+                                  ? (status == "error"
+                                  ? "⚠️ エラーが発生しました"
+                                  : "⏳ 返信待ち…")
+                                  : aiReply,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     );
                   },
                 );
               },
+            ),
+          ),
+
+          // 🔹 入力欄 + 送信ボタン
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: const InputDecoration(
+                        hintText: "メッセージを入力...",
+                        border: OutlineInputBorder(),
+                      ),
+                      minLines: 1,
+                      maxLines: 3,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: _sending
+                        ? const CircularProgressIndicator()
+                        : const Icon(Icons.send, color: Colors.blue),
+                    onPressed: _sending ? null : _send,
+                  )
+                ],
+              ),
             ),
           ),
         ],
