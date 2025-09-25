@@ -12,7 +12,7 @@ class MainNavigationPage extends StatefulWidget {
 }
 
 class _MainNavigationPageState extends State<MainNavigationPage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   final List<Widget> _pages = const [
     HealthRecordPage(),
