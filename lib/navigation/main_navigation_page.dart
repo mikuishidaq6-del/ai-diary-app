@@ -22,7 +22,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   final List<String> _titles = const [
     "健康記録",
-    "AI投稿",
+    "ほっチャ",
     "カレンダー",
   ];
 
@@ -59,7 +59,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: "AI投稿",
+            label: "ほっチャ",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
