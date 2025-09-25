@@ -22,7 +22,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   final List<String> _titles = const [
     "健康記録",
-    "ほっチャ",
+    "ほっとチャット",
     "カレンダー",
   ];
 
