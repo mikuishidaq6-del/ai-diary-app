@@ -9,31 +9,38 @@ class SettingsDrawer extends StatelessWidget {
       child: SafeArea(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const [
+          children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.lightBlueAccent),
-              child: Text(
-                "⚙️ 設定メニュー",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              decoration: const BoxDecoration(color: Colors.lightBlueAccent),
+              child: Row(
+                mainAxisSize: MainAxisSize.min, // ← これで幅がコンパクトに
+                children: const [
+                  Icon(Icons.settings, color: Colors.white, size: 28),
+                  SizedBox(width: 8),
+                  Text(
+                    "設定メニュー",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
-            ListTile(
+            const ListTile(
               leading: Icon(Icons.person),
               title: Text("プロフィール"),
             ),
-            ListTile(
+            const ListTile(
               leading: Icon(Icons.notifications),
               title: Text("通知設定"),
             ),
-            ListTile(
+            const ListTile(
               leading: Icon(Icons.color_lens),
               title: Text("テーマ設定"),
             ),
-            ListTile(
+            const ListTile(
               leading: Icon(Icons.info),
               title: Text("このアプリについて"),
             ),
@@ -43,3 +50,5 @@ class SettingsDrawer extends StatelessWidget {
     );
   }
 }
+
+
