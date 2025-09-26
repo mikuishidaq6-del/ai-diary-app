@@ -39,13 +39,12 @@ Future<void> main() async {
   _showTestNotification();
 }
 
-/// テスト用通知（5秒後に出す）
 Future<void> _showTestNotification() async {
   Future.delayed(const Duration(seconds: 5), () async {
     await flutterLocalNotificationsPlugin.show(
       0,
-      "💡 今日のひとこと",
-      "今日はどんなことが心に残りましたか？",
+      "🌸💭 ほっチャからのひとこと", // ← ロゴ風タイトル
+      "今日はどんな一日でしたか？",
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_prompt_channel',
