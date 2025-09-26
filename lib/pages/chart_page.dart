@@ -180,6 +180,8 @@ class _ChartPageState extends State<ChartPage> with SingleTickerProviderStateMix
               padding: const EdgeInsets.all(16),
               child: LineChart(
                 LineChartData(
+                  minY: type == "temperature" ? 30 : null,
+                  maxY: type == "temperature" ? 45 : null,
                   titlesData: FlTitlesData(
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
